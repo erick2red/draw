@@ -13,6 +13,8 @@ bin_PROGRAMS = draw
 
 draw_SOURCES = \
 	main.c \
+	draw-plotting-grid.h \
+	draw-plotting-grid.c \
 	draw-application.h \
 	draw-application.c
 
