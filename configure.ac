@@ -11,9 +11,6 @@ AM_SILENT_RULES([yes])
 
 AC_PROG_CC
 
-
-
-
 dnl ***************************************************************************
 dnl Internationalization
 dnl ***************************************************************************
@@ -25,16 +22,25 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [GETTEXT package name])
 
 AM_GLIB_GNU_GETTEXT
 
-
-
 LT_INIT
 
+GNOME_COMPILE_WARNINGS(maximum)
+GNOME_MAINTAINER_MODE_DEFINES
 
+MAINTAINER_COMPILER_FLAGS="$MAINTAINER_COMPILER_FLAGS                        \
+                           -Wall -Wcast-align -Wuninitialized                \
+                           -Wno-strict-aliasing -Wempty-body -Wformat        \
+                           -Wformat-security -Wformat-nonliteral -Winit-self \
+      	                   -Wdeclaration-after-statement -Wvla               \
+                           -Wpointer-arith -Wmissing-declarations            \
+                           -Wcast-align                                      \
+                           -Wredundant-decls"
+
+# strip leading spaces                                                                                                        
+MAINTAINER_COMPILER_FLAGS=${MAINTAINER_COMPILER_FLAGS#*  }
+AC_SUBST(MAINTAINER_COMPILER_FLAGS)
 
 PKG_CHECK_MODULES(DRAW, [gtk+-3.0 >= 2.90.3 gtk+-3.0])
-
-
-
 
 AC_OUTPUT([
 Makefile
