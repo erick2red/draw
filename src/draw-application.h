@@ -25,14 +25,15 @@
 G_BEGIN_DECLS
 
 #define DRAW_TYPE_APPLICATION             (draw_application_get_type ())
-#define DRAW_APPLICATION(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), DRAW_TYPE_APPLICATION, Draw))
-#define DRAW_APPLICATION_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), DRAW_TYPE_APPLICATION, DrawClass))
+#define DRAW_APPLICATION(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), DRAW_TYPE_APPLICATION, DrawApplication))
+#define DRAW_APPLICATION_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), DRAW_TYPE_APPLICATION, DrawApplicationClass))
 #define DRAW_IS_APPLICATION(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DRAW_TYPE_APPLICATION))
 #define DRAW_IS_APPLICATION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), DRAW_TYPE_APPLICATION))
-#define DRAW_APPLICATION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), DRAW_TYPE_APPLICATION, DrawClass))
+#define DRAW_APPLICATION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), DRAW_TYPE_APPLICATION, DrawApplicationClass))
 
 typedef struct _DrawApplicationClass       DrawApplicationClass;
 typedef struct _DrawApplication            DrawApplication;
+typedef struct _DrawApplicationPrivate     DrawApplicationPrivate;
 
 struct _DrawApplicationClass
 {
@@ -42,6 +43,8 @@ struct _DrawApplicationClass
 struct _DrawApplication
 {
   GtkApplication parent_instance;
+
+  DrawApplicationPrivate *priv;
 };
 
 GType              draw_application_get_type (void) G_GNUC_CONST;

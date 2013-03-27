@@ -16,69 +16,61 @@
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "draw-application.h"
 
 #include <glib/gi18n.h>
 
-G_DEFINE_TYPE (DrawApplication, draw_application, GTK_TYPE_APPLICATION);
-
-/* Create a new window loading a file */
-static void
-draw_application_new_window (GApplication *app,
-                             GFile        *file)
+struct _DrawApplicationPrivate
 {
   GtkWidget *window;
+};
 
-  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (window), "draw");
+G_DEFINE_TYPE (DrawApplication, draw_application, GTK_TYPE_APPLICATION);
 
-  gtk_window_set_application (GTK_WINDOW (window), GTK_APPLICATION (app));
-  if (file != NULL)
-    {
-      /* TODO: Add code here to open the file in the new window */
-    }
-  gtk_widget_show_all (GTK_WIDGET (window));
+static void
+draw_application_new_window (GApplication *app)
+{
+  DrawApplicationPrivate *priv;
+  priv = DRAW_APPLICATION (app)->priv;
+
+  priv->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_title (GTK_WINDOW (priv->window), "draw");
+
+  gtk_window_set_application (GTK_WINDOW (priv->window), GTK_APPLICATION (app));
+  gtk_widget_show_all (GTK_WIDGET (priv->window));
 }
 
-
-/* GApplication implementation */
 static void
 draw_application_activate (GApplication *application)
 {
-  draw_application_new_window (application, NULL);
-}
+  DrawApplicationPrivate *priv;
 
-static void
-draw_application_open (GApplication  *application,
-                       GFile        **files,
-                       gint           n_files,
-                       const gchar   *hint)
-{
-  gint i;
+  priv = DRAW_APPLICATION (application)->priv;
 
-  for (i = 0; i < n_files; i++)
-    draw_application_new_window (application, files[i]);
-}
+  if (priv->window == NULL)
+    draw_application_new_window (application);
 
-static void
-draw_application_init (DrawApplication *object)
-{
-
-}
-
-static void
-draw_application_finalize (GObject *object)
-{
-  G_OBJECT_CLASS (draw_application_parent_class)->finalize (object);
+  gtk_window_present (GTK_WINDOW (priv->window));
 }
 
 static void
 draw_application_class_init (DrawApplicationClass *klass)
 {
-  G_APPLICATION_CLASS (klass)->activate = draw_application_activate;
-  G_APPLICATION_CLASS (klass)->open = draw_application_open;
+  GApplicationClass *application_class;
 
-  G_OBJECT_CLASS (klass)->finalize = draw_application_finalize;
+  application_class = G_APPLICATION_CLASS (klass);
+  application_class->activate = draw_application_activate;
+
+  g_type_class_add_private ((gpointer) klass, sizeof(DrawApplicationPrivate));
+}
+
+static void
+draw_application_init (DrawApplication *self)
+{
+  self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
+                                            DRAW_TYPE_APPLICATION,
+                                            DrawApplicationPrivate);
 }
 
 DrawApplication*
@@ -86,6 +78,6 @@ draw_application_new (void)
 {
   return g_object_new (draw_application_get_type (),
                        "application-id", "org.gnome.draw",
-                       "flags", G_APPLICATION_HANDLES_OPEN,
+                       "flags", 0,
                        NULL);
 }
